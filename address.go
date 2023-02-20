@@ -1,13 +1,13 @@
-// Package Address where you can find more information 
+// Package Address where you can find more information
 // about an address in the city. This package counts with
 // Address time where you can write the ID or zipcode
-// Notes about the delivery information and the date where 
+// Notes about the delivery information and the date where
 //  the delivery took place or any explanation about what happened
-// 
-// METHODS 
+//
+// METHODS
 // NewAddress will set a json file with more information
-// about certain address, 
-// 
+// about certain address,
+//
 // WriteNote will receive new information about an address
 // collecting the time when it was written and Body for information.
 
@@ -20,12 +20,17 @@ import (
 	"time"
 )
 
+// Variables and constants
+
+var counter int
+
 // Types Address & Notes
 
 // Address comments and addresses info
 type Address struct {
 	ID           int     `json:"id"`
 	StreetName   string  `json:"StreetName"`
+	Housenumber  int     `json:"number"`
 	Neighborhood string  `json:"neighborhood"`
 	AddressNotes []Notes `json:"notes"`
 }
@@ -36,14 +41,29 @@ type Notes struct {
 	Body      string    `json:"message"`
 }
 
-
 // METHODS
 
-func (addr *Address) NewAddress() {
+// NewAddress receives a pointer from Address type
+// the whole information must be written already in
+// the variable which exports Address or it'll return an error
+func (addr *Address) NewAddress() error {
+	counter++
+	addr.ID = counter
 	content, err := json.Marshal(addr)
 	if err != nil {
 		fmt.Errorf("Something went wrong %s", err)
 	}
 
-	err = os.WriteFile("address.json", content, 0644)
+	addrJsonFileName := fmt.Sprintf("%v%v_address.json", addr.Housenumber, addr.StreetName)
+
+	err = os.WriteFile(addrJsonFileName, content, 0644)
+	return err
+}
+
+// WriteNote receives a pointer of Notes, defines its time and add a message as Boby
+
+func (nt *Notes) WriteNote(message string) *Notes {
+	nt.CreatedAt = time.Now()
+	nt.Body = message
+	return nt
 }
