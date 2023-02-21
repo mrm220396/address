@@ -43,6 +43,16 @@ type Notes struct {
 
 // METHODS
 
+
+// ViewHistory shows all notes history it's going to demonstrate in terminal only so far.
+
+func (addr *Address) ViewHistory() {
+	for _, i := range addr.AddressNotes {
+		fmt.Printf("(%s) : %v\n", i.CreatedAt.Format("2006-01-02 15:04"), i.Body)
+	}
+}
+
+
 // NewAddress receives a pointer from Address type
 // the whole information must be written already in
 // the variable which exports Address or it'll return an error
@@ -61,9 +71,15 @@ func (addr *Address) NewAddress() error {
 }
 
 // WriteNote receives a pointer of Notes, defines its time and add a message as Boby
-
 func (nt *Notes) WriteNote(message string) *Notes {
 	nt.CreatedAt = time.Now()
 	nt.Body = message
 	return nt
+}
+
+// ViewHistory shows all notes history
+func (addr *Address) ViewHistory() {
+	for _, i := range addr.AddressNotes {
+		fmt.Printf("(%s) : %v\n", i.CreatedAt.Format("2006-01-02 15:04"), i.Body)
+	}
 }
