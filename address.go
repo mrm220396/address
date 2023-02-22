@@ -35,23 +35,12 @@ type Address struct {
 	AddressNotes []Notes `json:"notes"`
 }
 
-// Notes add notes to the address comments
-type Notes struct {
-	CreatedAt time.Time `json:"created_when"`
-	Body      string    `json:"message"`
-}
-
-// METHODS
-
-
-// ViewHistory shows all notes history it's going to demonstrate in terminal only so far.
-
+// ViewHistory shows all notes history
 func (addr *Address) ViewHistory() {
 	for _, i := range addr.AddressNotes {
 		fmt.Printf("(%s) : %v\n", i.CreatedAt.Format("2006-01-02 15:04"), i.Body)
 	}
 }
-
 
 // NewAddress receives a pointer from Address type
 // the whole information must be written already in
@@ -70,6 +59,13 @@ func (addr *Address) NewAddress() error {
 	return err
 }
 
+// Notes add notes to the address comments
+type Notes struct {
+	Order     int       `json:"note_id"`
+	CreatedAt time.Time `json:"created_when"`
+	Body      string    `json:"message"`
+}
+
 // WriteNote receives a pointer of Notes, defines its time and add a message as Boby
 func (nt *Notes) WriteNote(message string) *Notes {
 	nt.CreatedAt = time.Now()
@@ -77,9 +73,14 @@ func (nt *Notes) WriteNote(message string) *Notes {
 	return nt
 }
 
-// ViewHistory shows all notes history
-func (addr *Address) ViewHistory() {
-	for _, i := range addr.AddressNotes {
-		fmt.Printf("(%s) : %v\n", i.CreatedAt.Format("2006-01-02 15:04"), i.Body)
-	}
+// DeleteNote will delete a given note
+func DeleteNote(index int, addr Address) Address {
+	notes := addr.AddressNotes
+	copy(notes[index:], notes[index+1:])
+	notes[len(notes)-1] = Notes{}
+	notes = notes[:len(notes)-1]
+
+	addr.NewAddress()
+	addr.AddressNotes = notes
+	return addr
 }
