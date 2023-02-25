@@ -73,6 +73,25 @@ func (nt *Notes) WriteNote(message string) *Notes {
 	return nt
 }
 
+// GetAddress
+func GetAddress(housenumber int, streetname string) Address {
+	var addr Address
+	var binaryJfile []byte
+	
+	filename := fmt.Sprintf("%v%v_address.json", housenumber, streetname)
+	addrJson, err := os.Open(filename)
+	
+	addrJson.Read(binaryJfile)
+	if err != nil {
+		fmt.Errorf("There's no file named %v\n%s", filename, err)
+	}
+
+	defer addrJson.Close()
+
+	json.Unmarshal(binaryJfile, &addr)
+	return addr
+}
+
 // DeleteNote will delete a given note
 func DeleteNote(index int, addr Address) Address {
 	notes := addr.AddressNotes
